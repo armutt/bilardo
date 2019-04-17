@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,8 @@ public class Board extends JPanel {
 		holes.add(new Ellipse2D.Double(0      , height-HoleRadius, HoleRadius, HoleRadius));
 		holes.add(new Ellipse2D.Double((width-HoleRadius)/2, height-HoleRadius, HoleRadius, HoleRadius));
 		holes.add(new Ellipse2D.Double(width-HoleRadius  , height-HoleRadius, HoleRadius, HoleRadius));
+		
+		
 	}
 	
 	@Override
