@@ -40,17 +40,31 @@ public class PointLine  {
 			}
 		}
 		else{
-			double angle = Math.atan((x1-x2)/(y1-y2));
+			double angle = Math.atan((x1-x2)/(y1-y2))+Math.PI;
+			System.out.println(angle);
 			double a=x1;
 			double b=y1;
 	
-			while(Math.abs((a-x1)/(x1-x2))<=1&&Math.abs((b-y1)/(y2-y1))<=1) {
+			double disx=1,disy=1;
+			do {
 				
+			
 				Ellipse2D.Double e=new Ellipse2D.Double(a,b,radius,radius);
 				points.add(e);
-				a+=Math.cos(angle)*distance;
-				b+=Math.sin(angle)*distance;
-			}
+				
+				if(y1>y2) {
+					a+=Math.sin(angle)*distance;
+					b+=Math.cos(angle)*distance;
+				}
+				else
+				{
+					a-=Math.sin(angle)*distance;
+					b-=Math.cos(angle)*distance;
+				}
+				disx=(a-x1)/(x1-x2);
+				disy=(b-y1)/(y2-y1);
+				
+			}while(Math.abs(disx)<=1&&Math.abs(disy)<=1);
 		}
 	}
 	
@@ -69,7 +83,10 @@ public class PointLine  {
 
 	public void setRadius(int radius) {
 		this.radius = radius;
-		set();
+		for (Ellipse2D.Double double1 : points) {
+			double1.height=radius;
+			double1.width=radius;
+		}
 	}
 
 
