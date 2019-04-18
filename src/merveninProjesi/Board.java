@@ -17,7 +17,7 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements MouseListener {
 	List<Ball>balls=new  ArrayList<>();
-	int width=800,height=400;
+	static int width=800,height=400;
 	java.util.List<Ellipse2D.Double> holes=new ArrayList<>();
 	boolean pressed=false,opt=false;
 	
@@ -103,12 +103,33 @@ public class Board extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		
+		switch (e.getButton()) {
+		case MouseEvent.BUTTON1:
+			pressed=true;
+			break;
+		case MouseEvent.BUTTON2:
+			double angle=Math.atan2(e.getY()-balls.get(0).y,e.getX()-balls.get(0).x)+Math.PI;
+			
+			
+			Movement m=new Movement(balls.get(0),angle, 50);
+			m.start();
+			break;
+		case MouseEvent.BUTTON3:
+			opt=!opt;
+			break;
+
+		default:
+			break;
+		}
 		if(e.getButton()==MouseEvent.BUTTON3)
 		{
-			opt=!opt;
+			
 			return;
 		}
-		pressed=true;
+		
+		
+		
 		System.out.println('!');
 		
 		
