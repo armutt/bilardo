@@ -3,12 +3,14 @@ package merveninProjesi;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +19,14 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements MouseListener {
 	List<Ball>balls=new  ArrayList<>();
-	static int width=800,height=400;
+	int width=800,height=400;
+	int kenar=20;
 	java.util.List<Ellipse2D.Double> holes=new ArrayList<>();
 	boolean pressed=false,opt=false;
-	
 	public Board() {
 		super();
 		setup();
+		/*
 		int HoleRadius=Ball.RADIUS*2;
 		holes.add(new Ellipse2D.Double(0      , 0,      HoleRadius, HoleRadius));
 		holes.add(new Ellipse2D.Double((width-HoleRadius)/2, 0,     HoleRadius, HoleRadius));
@@ -31,8 +34,9 @@ public class Board extends JPanel implements MouseListener {
 		holes.add(new Ellipse2D.Double(0      , height-HoleRadius, HoleRadius, HoleRadius));
 		holes.add(new Ellipse2D.Double((width-HoleRadius)/2, height-HoleRadius, HoleRadius, HoleRadius));
 		holes.add(new Ellipse2D.Double(width-HoleRadius  , height-HoleRadius, HoleRadius, HoleRadius));
+		*/
 		addMouseListener(this);
-		Timer t=new Timer(10, new ActionListener() {
+		Timer t=new Timer(1, new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -44,15 +48,14 @@ public class Board extends JPanel implements MouseListener {
 		
 		
 	}
-	
 	@Override
 	public void paint(Graphics g) {
-		g.translate((getWidth()-width)/2 , (getHeight()-height)/2);
+		g.translate((getWidth()-(width+2*kenar))/2 , (getHeight()-(height+2*kenar))/2);
 		super.paint(g);
 		g.setColor(new Color(87, 38, 28));
-		g.fillRect(0, 0, width, height);
+		g.fillRect(0, 0, width+2*kenar, height+2*kenar);
 		g.setColor(new Color(28, 87, 49));
-		g.fillRect(Ball.RADIUS, Ball.RADIUS, width-Ball.RADIUS*2, height-Ball.RADIUS*2);
+		g.fillRect(kenar, kenar, width, height);
 		Graphics2D g2=(Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(new Color(200, 199, 178));
@@ -63,7 +66,7 @@ public class Board extends JPanel implements MouseListener {
 			ball.Paint(g2);
 		}
 		if(pressed)
-		{PointLine p=new PointLine(balls.get(0).x+(Ball.RADIUS/2), balls.get(0).y+(Ball.RADIUS/2), getMousePosition().getX(), getMousePosition().getY(), opt);
+		{PointLine p=new PointLine(balls.get(0).getCenterX(), balls.get(0).getCenterY(), getMousePosition().getX(), getMousePosition().getY(), opt);
 		p.Paint(g2);}
 		
 	}
@@ -72,7 +75,7 @@ public class Board extends JPanel implements MouseListener {
 		balls.clear();
 		Ball t=new Ball(width*0.75, height/2);
 		balls.add(t);
-		
+		/*  
 		for(int i=0;i<5;i++) {
 			for(int j=0;j<=i;j++) {
 				Ball b=new Ball(width*0.25-Ball.RADIUS*i,(height/2-(Ball.RADIUS/2)*i)+Ball.RADIUS*j );
@@ -80,26 +83,20 @@ public class Board extends JPanel implements MouseListener {
 				balls.add(b);
 			}
 		}
-		
+		*/
 	}
+	
+	
+	
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseClicked(MouseEvent e) {}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(MouseEvent e) {}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -109,11 +106,10 @@ public class Board extends JPanel implements MouseListener {
 			pressed=true;
 			break;
 		case MouseEvent.BUTTON2:
-			double angle=Math.atan2(e.getY()-balls.get(0).y,e.getX()-balls.get(0).x)+Math.PI;
-			
-			
-			Movement m=new Movement(balls.get(0),angle, 50);
-			m.start();
+			double angle=Math.atan2(e.getY()-balls.get(0).getCenterY(),e.getX()-balls.get(0).getCenterX())+Math.PI;
+			 Movement m=new Movement(balls.get(0),angle, 50);
+			 m.setBounds(kenar, kenar, kenar+width, kenar+height);
+			 m.start();
 			break;
 		case MouseEvent.BUTTON3:
 			opt=!opt;
@@ -122,25 +118,20 @@ public class Board extends JPanel implements MouseListener {
 		default:
 			break;
 		}
-		if(e.getButton()==MouseEvent.BUTTON3)
-		{
-			
-			return;
-		}
-		
-		
-		
-		System.out.println('!');
-		
-		
+		//System.out.println('!');
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(e.getButton()==MouseEvent.BUTTON3)
-			return;
-		pressed=false;
-		
+		if(e.getButton()==MouseEvent.BUTTON1) {
+			pressed=false;
+			double angle=Math.atan2(e.getY()-balls.get(0).getCenterY(),e.getX()-balls.get(0).getCenterX())+Math.PI;
+			double power=(e.getX()-balls.get(0).getCenterX())+(e.getY()-balls.get(0).getCenterY());
+					power/=5;
+					Movement m=new Movement(balls.get(0),angle, 50);
+					 m.setBounds(kenar, kenar, kenar+width, kenar+height);
+					 m.start();
+		}
 	}
 	
 }

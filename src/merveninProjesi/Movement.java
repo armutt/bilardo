@@ -5,33 +5,67 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Timer;
 
-public class Movement  implements ActionListener{
+public class Movement implements ActionListener {
 	
-	Timer timer;
 	Ball ball;
-	double angle;
-	static double acceleration=0.7;
-	double power;
+	double angleX,angleY;
+	
+	int minX,minY,maxX,maxY;
+	static double acceleration=0.9;
 	double speed;
+	Timer timer;
+	
 	public Movement(Ball b, double ang,double power ) {
 		ball=b;
-		angle=ang;
+		angleX=Math.cos(ang);
+		angleY=Math.sin(ang);
 		speed=power;
-		timer=new Timer(10,this );
+		timer=new Timer(50, this);
 	}
-	void start() {
+	
+	public void start() {
 		timer.start();
 	}
+	
+	public void setBounds(int x1,int y1,int x2,int y2) {
+		minX=x1;
+		maxX=x2;
+		minY=y1;
+		maxY=y2;
+		
+	}
+	
+	public void move() {}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		double speedx=Math.cos(angle)*speed;
-		double speedy=Math.sin(angle)*speed;
-		
-		ball.x+=speedx;
-		ball.y+=speedy;
+		double speedx=angleX*speed;
+		double speedy=angleY*speed;
+		double nX=ball.getX() + speedx;
+		double nY=ball.getY() + speedy;
+		if(nX<minX) { 
+			nX=minX+(minX-nX);
+			angleX*=-1;
+		}
+		else if(nX>maxX) {
+			nX=maxX-(nX-maxX);
+			angleX*=-1;
+		}
+		if(nY<minY) { 
+			nY=minY+(minY-nY);
+			angleY*=-1;
+		}
+		else if(nY>maxY) {
+			nY=maxY-(nY-maxY);
+			angleY*=-1;
+		}
+			
+		ball.setX(nX);
+		ball.setY(nY);
 		speed*=acceleration;
-		if(speed<0.2)
+		if(speed<1)
 			timer.stop();
+		
 	}
 
 }

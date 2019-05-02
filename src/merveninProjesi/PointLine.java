@@ -41,7 +41,7 @@ public class PointLine  {
 		}
 		else{
 			double angle = Math.atan((x1-x2)/(y1-y2))+Math.PI;
-			System.out.println(angle);
+			//System.out.println(angle);
 			double a=x1;
 			double b=y1;
 	
