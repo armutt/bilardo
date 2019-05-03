@@ -36,6 +36,12 @@ public class Movement implements ActionListener {
 	}
 	
 	public void move() {}
+	
+	public boolean isStopped() {return !timer.isRunning();}
+		
+		
+		
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -67,5 +73,6 @@ public class Movement implements ActionListener {
 			timer.stop();
 		
 	}
+	
 
 }

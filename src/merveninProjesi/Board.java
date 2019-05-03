@@ -22,10 +22,13 @@ public class Board extends JPanel implements MouseListener {
 	int width=800,height=400;
 	int kenar=20;
 	java.util.List<Ellipse2D.Double> holes=new ArrayList<>();
+	List<Movement> moves=new ArrayList<>();
+	int offsetX,offsetY;
 	boolean pressed=false,opt=false;
 	public Board() {
 		super();
 		setup();
+		
 		/*
 		int HoleRadius=Ball.RADIUS*2;
 		holes.add(new Ellipse2D.Double(0      , 0,      HoleRadius, HoleRadius));
@@ -41,6 +44,12 @@ public class Board extends JPanel implements MouseListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				repaint();
+				for (Movement movement : moves) {
+					if(movement.isStopped()) {
+						moves.remove(movement);
+					break;
+					}
+				}
 				
 			}
 		});
@@ -50,7 +59,9 @@ public class Board extends JPanel implements MouseListener {
 	}
 	@Override
 	public void paint(Graphics g) {
-		g.translate((getWidth()-(width+2*kenar))/2 , (getHeight()-(height+2*kenar))/2);
+		offsetX=(getWidth()-(width+2*kenar))/2;
+		offsetY=(getHeight()-(height+2*kenar))/2;
+		g.translate(offsetX , offsetY);
 		super.paint(g);
 		g.setColor(new Color(87, 38, 28));
 		g.fillRect(0, 0, width+2*kenar, height+2*kenar);
@@ -65,8 +76,8 @@ public class Board extends JPanel implements MouseListener {
 		for (Ball ball : balls) {
 			ball.Paint(g2);
 		}
-		if(pressed)
-		{PointLine p=new PointLine(balls.get(0).getCenterX(), balls.get(0).getCenterY(), getMousePosition().getX(), getMousePosition().getY(), opt);
+		if(pressed){
+			PointLine p=new PointLine(balls.get(0).getCenterX(), balls.get(0).getCenterY(), getMousePosition().getX()-offsetX, getMousePosition().getY()-offsetY, opt);
 		p.Paint(g2);}
 		
 	}
@@ -106,9 +117,10 @@ public class Board extends JPanel implements MouseListener {
 			pressed=true;
 			break;
 		case MouseEvent.BUTTON2:
-			double angle=Math.atan2(e.getY()-balls.get(0).getCenterY(),e.getX()-balls.get(0).getCenterX())+Math.PI;
+			double angle=Math.atan2(e.getY()-balls.get(0).getCenterY()-offsetY,e.getX()-balls.get(0).getCenterX()-offsetX)+Math.PI;
 			 Movement m=new Movement(balls.get(0),angle, 50);
-			 m.setBounds(kenar, kenar, kenar+width, kenar+height);
+			m.setBounds(kenar, kenar, kenar+width, kenar+height);
+			 moves.add(m);
 			 m.start();
 			break;
 		case MouseEvent.BUTTON3:
@@ -130,6 +142,7 @@ public class Board extends JPanel implements MouseListener {
 					power/=5;
 					Movement m=new Movement(balls.get(0),angle, 50);
 					 m.setBounds(kenar, kenar, kenar+width, kenar+height);
+					 moves.add(m);
 					 m.start();
 		}
 	}
